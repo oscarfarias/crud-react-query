@@ -56,7 +56,7 @@ const API = {
       },
     })
   },
-  upsertUser: async (user: AugmentedUser): Promise<AugmentedUser> => {
+  upsertUser: async (user: Partial<AugmentedUser>): Promise<AugmentedUser> => {
     return axiosInstance.post(`/users`, user)
   },
 }

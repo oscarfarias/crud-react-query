@@ -55,7 +55,18 @@ const userRepository = {
   },
   upsert: async (user: RequiredEntityData<User>) => {
     const em = await getEntityManager()
-    const upsertedUser = await em.upsert(User, user)
+    if (user.id) {
+      const updatedUser = await em.findOne(User, user.id, {
+        populate: [`password`],
+      })
+      if (updatedUser) {
+        const upsertedUser = await em.assign(updatedUser, user)
+        await em.persistAndFlush(upsertedUser)
+        await em.populate(upsertedUser, [`role`])
+        return upsertedUser
+      }
+    }
+    const upsertedUser = await em.create(User, user)
     await em.persistAndFlush(upsertedUser)
     return upsertedUser
   },

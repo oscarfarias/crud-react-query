@@ -11,6 +11,7 @@ export const getUsers = async (
 ): Promise<void> => {
   const users = await userRepository.findAll({
     populate: [`role`],
+    orderBy: { firstName: `ASC` },
   })
   const [usersIds, usersById] = serializeCollection({ entity: users })
 
@@ -33,7 +34,7 @@ export const upsertUser = async (
   req: ExtendedRequest,
   res: NextApiResponse,
 ): Promise<void> => {
-  const { user } = req.body
+  const user = req.body
   const upsertedUser = await userRepository.upsert(user)
   successResponse(res, upsertedUser)
 }

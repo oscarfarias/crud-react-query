@@ -24,7 +24,13 @@ const getColumns = (): HeadCell<AugmentedUser>[] => {
     {
       title: `Role`,
       key: `role`,
-      render: (data: AugmentedUser): JSX.Element => <>{data.role.name}</>,
+      render: (data: AugmentedUser): JSX.Element => {
+        let roleName = ``
+        if (typeof data.role === `object`) {
+          roleName = data.role.name
+        }
+        return <>{roleName}</>
+      },
     },
   ]
 }
@@ -45,6 +51,12 @@ const Dashboard = (): JSX.Element => {
     openDeleteModal,
     closeModal,
     onDeleteUsers,
+    onUpsertUser,
+    onChangeEmail,
+    onChangeFirstName,
+    onChangeLastName,
+    onChangeRole,
+    onChangePassword,
   } = useDashboard()
 
   return (
@@ -66,26 +78,37 @@ const Dashboard = (): JSX.Element => {
         title={user.id ? `Update user` : `Create New user`}
         isOpen={modalType === MODAL_TYPES.UPSERT}
         onCancel={onCloseModal}
-        onConfirm={onCloseModal}
+        onConfirm={onUpsertUser}
         confirmText={user.id ? `UPDATE` : `CREATE`}
       >
         <Grid container p={3} gap={1} flexDirection="column">
-          <TextField placeholder="First Name" defaultValue={user.firstName} />
-          <TextField placeholder="Last Name" defaultValue={user.lastName} />
+          <TextField
+            placeholder="First Name"
+            defaultValue={user.firstName}
+            onChange={(event) => onChangeFirstName(event.target.value)}
+          />
+          <TextField
+            placeholder="Last Name"
+            defaultValue={user.lastName}
+            onChange={(event) => onChangeLastName(event.target.value)}
+          />
           <TextField
             type="email"
             placeholder="Email"
             defaultValue={user.email}
+            onChange={(event) => onChangeEmail(event.target.value)}
           />
           <SelectInput
             options={roles}
             placeholder="Role"
-            defaultValue={user.role?.id}
+            defaultValue={user?.role?.id}
+            onChange={(event) => onChangeRole(Number(event.target.value))}
           />
           {user.id == null ? (
             <TextField
               type={showPassword ? `text` : `password`}
               placeholder="Password"
+              onChange={(event) => onChangePassword(event.target.value)}
               InputProps={{
                 endAdornment: (
                   <IconButton onClick={toggleShowPassword}>

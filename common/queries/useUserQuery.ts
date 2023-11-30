@@ -65,10 +65,35 @@ export const useDeleteUserMutation = (
 }
 
 export const useUpsertUserMutation = (
-  options?: MutationOptions<AugmentedUser, AugmentedUser>,
-): MutationResult<AugmentedUser, AugmentedUser> => {
+  options?: MutationOptions<AugmentedUser, Partial<AugmentedUser>>,
+): MutationResult<AugmentedUser, Partial<AugmentedUser>> => {
+  const queryClient = useQueryClient()
   const mutation = useMutation({
-    mutationFn: (user: AugmentedUser) => API.upsertUser(user),
+    mutationFn: (user: Partial<AugmentedUser>) => API.upsertUser(user),
+    onSuccess: (upsertedUser) => {
+      queryClient.setQueryData<
+        SerializedResponse<AugmentedUser, { users: string }>
+      >(QUERY_KEYS.users, (oldData) => {
+        if (oldData == null) {
+          return {
+            usersById: {},
+            usersIds: [],
+          }
+        }
+        const { usersById, usersIds } = oldData
+        const newUsersIds = [...usersIds, upsertedUser.id]
+        const newUsersById = {
+          ...usersById,
+          [upsertedUser.id]: upsertedUser,
+        }
+
+        return {
+          usersById: newUsersById,
+          usersIds: newUsersIds,
+        }
+      })
+      enqueueSnackbar(`Saved!`, { variant: `success` })
+    },
     ...options,
   })
   return mutation

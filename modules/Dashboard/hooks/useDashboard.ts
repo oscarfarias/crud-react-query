@@ -1,13 +1,14 @@
 import { useMemo } from 'react'
-
 import { AugmentedUser } from 'common/types/user'
 import {
   useDeleteUserMutation,
+  useUpsertUserMutation,
   useUserQuery,
 } from 'common/queries/useUserQuery'
 import { useUserStore } from '../store'
 import { MODAL_TYPES } from '../types'
 import { useRoleQuery } from 'common/queries/useRoleQuery'
+import { Role } from 'entities'
 
 const useDashboard = () => {
   const {
@@ -23,6 +24,7 @@ const useDashboard = () => {
   const userQuery = useUserQuery()
   const roleQuery = useRoleQuery()
   const deleteUsers = useDeleteUserMutation()
+  const upsertUser = useUpsertUserMutation()
   const users = useMemo(
     () => (userQuery.data != null ? userQuery.data : []),
     [userQuery.data],
@@ -59,6 +61,41 @@ const useDashboard = () => {
     setSelectedUsersIds([])
     closeModal()
   }
+  const onUpsertUser = async (): Promise<void> => {
+    await upsertUser.mutateAsync(user)
+    setUser({})
+    closeModal()
+  }
+  const onChangeFirstName = (firstName: string): void => {
+    setUser({
+      ...user,
+      firstName,
+    })
+  }
+  const onChangeLastName = (lastName: string): void => {
+    setUser({
+      ...user,
+      lastName,
+    })
+  }
+  const onChangeEmail = (email: string): void => {
+    setUser({
+      ...user,
+      email,
+    })
+  }
+  const onChangeRole = (role: number): void => {
+    setUser({
+      ...user,
+      role: role as unknown as Role,
+    })
+  }
+  const onChangePassword = (password: string): void => {
+    setUser({
+      ...user,
+      password,
+    })
+  }
 
   return {
     user,
@@ -75,6 +112,12 @@ const useDashboard = () => {
     closeModal,
     openDeleteModal,
     onDeleteUsers,
+    onUpsertUser,
+    onChangeEmail,
+    onChangeFirstName,
+    onChangeLastName,
+    onChangeRole,
+    onChangePassword,
   }
 }
 
