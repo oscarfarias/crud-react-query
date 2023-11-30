@@ -49,5 +49,15 @@ const API = {
   getRoles: async (): Promise<SerializedResponse<Role, { roles: string }>> => {
     return axiosInstance.get(`/roles`)
   },
+  deleteUser: async (usersIds: string[]): Promise<string[]> => {
+    return axiosInstance.delete(`/users`, {
+      data: {
+        usersIds,
+      },
+    })
+  },
+  upsertUser: async (user: AugmentedUser): Promise<AugmentedUser> => {
+    return axiosInstance.post(`/users`, user)
+  },
 }
 export default API

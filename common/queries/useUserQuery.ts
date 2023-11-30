@@ -1,8 +1,14 @@
 import API from 'common/api'
 import { QUERY_KEYS } from './keys'
-import { AugmentedUser, QueryResult } from 'common/types'
-import { useQuery } from 'react-query'
-
+import {
+  AugmentedUser,
+  QueryResult,
+  MutationOptions,
+  MutationResult,
+  SerializedResponse,
+} from 'common/types'
+import { useQuery, useMutation, useQueryClient } from 'react-query'
+import { enqueueSnackbar } from 'notistack'
 export const useUserQuery = (): QueryResult<AugmentedUser[] | undefined> =>
   useQuery({
     queryKey: QUERY_KEYS.users,
@@ -16,3 +22,54 @@ export const useUserQuery = (): QueryResult<AugmentedUser[] | undefined> =>
       return usersIds.map((userId) => usersById[userId])
     },
   })
+
+export const useDeleteUserMutation = (
+  options?: MutationOptions<string[], string[]>,
+): MutationResult<string[], string[]> => {
+  const queryClient = useQueryClient()
+  const mutation = useMutation({
+    mutationFn: (usersIds) => API.deleteUser(usersIds),
+    onSuccess: (deletedUsersIds) => {
+      queryClient.setQueryData<
+        SerializedResponse<AugmentedUser, { users: string }>
+      >(QUERY_KEYS.users, (oldData) => {
+        if (oldData == null) {
+          return {
+            usersById: {},
+            usersIds: [],
+          }
+        }
+        const { usersById, usersIds } = oldData
+        const newUsersIds = usersIds.filter(
+          (userId) => !deletedUsersIds.includes(userId),
+        )
+        const newUsersById = {
+          ...usersById,
+        }
+        deletedUsersIds.forEach((userId) => {
+          delete newUsersById[userId]
+        })
+        return {
+          usersById: newUsersById,
+          usersIds: newUsersIds,
+        }
+      })
+      enqueueSnackbar(`User(s) deleted`, { variant: `success` })
+    },
+    onError: () => {
+      enqueueSnackbar(`Error deleting user(s)`, { variant: `error` })
+    },
+    ...options,
+  })
+  return mutation
+}
+
+export const useUpsertUserMutation = (
+  options?: MutationOptions<AugmentedUser, AugmentedUser>,
+): MutationResult<AugmentedUser, AugmentedUser> => {
+  const mutation = useMutation({
+    mutationFn: (user: AugmentedUser) => API.upsertUser(user),
+    ...options,
+  })
+  return mutation
+}

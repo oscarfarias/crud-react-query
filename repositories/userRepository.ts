@@ -48,6 +48,17 @@ const userRepository = {
       await em.flush()
     }
   },
+  bulkDelete: async (ids: string[]) => {
+    const em = await getEntityManager()
+    await em.nativeUpdate(User, { id: { $in: ids } }, { deletedAt: new Date() })
+    await em.flush()
+  },
+  upsert: async (user: RequiredEntityData<User>) => {
+    const em = await getEntityManager()
+    const upsertedUser = await em.upsert(User, user)
+    await em.persistAndFlush(upsertedUser)
+    return upsertedUser
+  },
 }
 
 export default userRepository
