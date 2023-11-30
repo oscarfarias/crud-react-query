@@ -81,7 +81,10 @@ export const useUpsertUserMutation = (
           }
         }
         const { usersById, usersIds } = oldData
-        const newUsersIds = [...usersIds, upsertedUser.id]
+        const newUsersIds = [...usersIds]
+        if (!usersIds.includes(upsertedUser.id)) {
+          newUsersIds.push(upsertedUser.id)
+        }
         const newUsersById = {
           ...usersById,
           [upsertedUser.id]: upsertedUser,
