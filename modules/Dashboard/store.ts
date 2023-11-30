@@ -2,11 +2,12 @@ import { create } from 'zustand'
 import { UserStore } from './types'
 
 export const useUserStore = create<UserStore>((set) => ({
-  isModalOpen: false,
   showPassword: false,
+  selectedUsersIds: [],
   user: {},
-  openModal: () => set({ isModalOpen: true }),
-  closeModal: () => set({ isModalOpen: false }),
+  modalType: null,
   setUser: (user) => set({ user }),
   setShowPassword: (showPassword) => set({ showPassword }),
+  setSelectedUsersIds: (selectedUsersIds) => set({ selectedUsersIds }),
+  setModalType: (modalType) => set({ modalType }),
 }))

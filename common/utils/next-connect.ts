@@ -13,7 +13,7 @@ const unsecuredRoutes = [
   pathToRegexp(`/api/login`),
   pathToRegexp(`/api/passwordChange/(.*)`),
   { url: pathToRegexp(`/api/users/(.*)`), methods: [`GET`] },
-  { url: pathToRegexp(`/api/users`), methods: [`GET`] },
+  { url: pathToRegexp(`/api/users`), methods: [`GET`, `POST`, `DELETE`] },
   { url: pathToRegexp(`/api/roles`), methods: [`GET`] },
 ]
 const unauthorizedStatus = 401

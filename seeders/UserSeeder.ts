@@ -26,8 +26,8 @@ export class UserSeeder extends Seeder {
 
     await new UserFactory(em)
       .each((user) => {
-        user.firstName = `admin`
-        user.lastName = `admin`
+        user.firstName = `Admin`
+        user.lastName = `Admin`
         user.email = `admin@example.com`
         user.role = em.getReference(`Role`, 1)
       })

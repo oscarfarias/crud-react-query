@@ -1,4 +1,10 @@
-import { UseQueryResult, QueryKey, UseQueryOptions } from 'react-query'
+import {
+  UseQueryResult,
+  QueryKey,
+  UseQueryOptions,
+  UseMutationOptions,
+  UseMutationResult,
+} from 'react-query'
 
 interface QueryResultBase<T> extends Omit<UseQueryResult<T, unknown>, `data`> {
   data: T
@@ -15,3 +21,11 @@ export type QueryOptions<
   V extends QueryKey = string[],
   K = T,
 > = ExtendedQueryOptions<T, V, K>
+export type MutationOptions<TData = unknown, TVariables = unknown> = Omit<
+  UseMutationOptions<TData, unknown, TVariables, unknown>,
+  `mutationFn`
+>
+export type MutationResult<
+  TData = unknown,
+  TVariables = unknown,
+> = UseMutationResult<TData, unknown, TVariables, unknown>

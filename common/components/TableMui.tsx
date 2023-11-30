@@ -99,6 +99,9 @@ export default function MuiTable<T extends BaseElement>({
 }: EnhancedTableProps<T>): JSX.Element {
   const [selected, setSelected] = React.useState<string[] | undefined>([])
   const [page, setPage] = React.useState(1)
+  React.useEffect(() => {
+    setSelected([])
+  }, [rows.length])
 
   const handleSelectAllClick = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -174,14 +177,14 @@ export default function MuiTable<T extends BaseElement>({
         >
           <EnhancedTableHead
             columns={columns}
-            numSelected={selected !== undefined ? selected.length : 0}
+            numSelected={selected != null ? selected.length : 0}
             onSelectAllClick={handleSelectAllClick}
-            rowCount={rows !== undefined ? rows.length : 0}
+            rowCount={rows != null ? rows.length : 0}
             withSelection={withSelection}
           />
           <TableBody>
             {visibleRows?.map((row) => {
-              const rowKey = row.id !== undefined ? row.id : row.uuid
+              const rowKey = row.id != null ? row.id : row.uuid
               const isItemSelected = isSelected(rowKey as string)
               const labelId = `enhanced-table-checkbox-${rowKey}`
               return (
