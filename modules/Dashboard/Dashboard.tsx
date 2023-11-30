@@ -24,12 +24,8 @@ const getColumns = (): HeadCell<AugmentedUser>[] => {
     {
       title: `Role`,
       key: `role`,
-      render: (data: AugmentedUser): JSX.Element => {
-        let roleName = ``
-        if (typeof data.role === `object`) {
-          roleName = data.role.name
-        }
-        return <>{roleName}</>
+      render: (user: AugmentedUser): JSX.Element => {
+        return <>{user.role.name}</>
       },
     },
   ]

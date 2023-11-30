@@ -86,10 +86,21 @@ export const useUpsertUserMutation = (
           ...usersById,
           [upsertedUser.id]: upsertedUser,
         }
+        const sortedUsersIds = newUsersIds.sort((a, b) => {
+          const userA = newUsersById[a]
+          const userB = newUsersById[b]
+          if (userA.firstName < userB.firstName) {
+            return -1
+          }
+          if (userA.firstName > userB.firstName) {
+            return 1
+          }
+          return 0
+        })
 
         return {
           usersById: newUsersById,
-          usersIds: newUsersIds,
+          usersIds: sortedUsersIds,
         }
       })
       enqueueSnackbar(`Saved!`, { variant: `success` })

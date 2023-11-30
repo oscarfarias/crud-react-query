@@ -68,6 +68,7 @@ const userRepository = {
     }
     const upsertedUser = await em.create(User, user)
     await em.persistAndFlush(upsertedUser)
+    await em.populate(upsertedUser, [`role`])
     return upsertedUser
   },
 }
