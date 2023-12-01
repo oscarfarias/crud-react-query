@@ -6,8 +6,10 @@ export const useDashboardStore = create<DashboardStore>((set) => ({
   selectedUsersIds: [],
   user: {},
   modalType: null,
+  search: ``,
   setUser: (user) => set({ user }),
   setShowPassword: (showPassword) => set({ showPassword }),
   setSelectedUsersIds: (selectedUsersIds) => set({ selectedUsersIds }),
   setModalType: (modalType) => set({ modalType }),
+  setSearch: (search) => set({ search }),
 }))

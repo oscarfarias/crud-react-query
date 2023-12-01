@@ -21,6 +21,7 @@ const useDashboard = () => {
     setUser,
     selectedUsersIds,
     setSelectedUsersIds,
+    search,
   } = useDashboardStore((state) => state)
 
   const {
@@ -34,10 +35,21 @@ const useDashboard = () => {
   const roleQuery = useRoleQuery()
   const deleteUsers = useDeleteUserMutation()
   const upsertUser = useUpsertUserMutation()
-  const users = useMemo(
-    () => (userQuery.data != null ? userQuery.data : []),
-    [userQuery.data],
-  )
+  const users = useMemo(() => {
+    if (userQuery.data == null) {
+      return []
+    }
+    if (search.length > 0) {
+      return userQuery.data?.filter((user) => {
+        return (
+          user.firstName.toLowerCase().includes(search.toLowerCase()) ||
+          user?.lastName?.toLowerCase()?.includes(search.toLowerCase()) ||
+          user.email.toLowerCase().includes(search.toLowerCase())
+        )
+      })
+    }
+    return userQuery.data
+  }, [userQuery.data, search])
   const roles = useMemo(
     () => (roleQuery.data != null ? roleQuery.data : []),
     [roleQuery.data],

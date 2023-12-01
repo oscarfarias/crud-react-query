@@ -10,6 +10,7 @@ export type DashboardState = {
   user: Partial<AugmentedUser>
   showPassword: boolean
   selectedUsersIds: string[]
+  search: string
 }
 
 export type DashboardActions = {
@@ -17,6 +18,7 @@ export type DashboardActions = {
   setShowPassword: (showPassword: boolean) => void
   setSelectedUsersIds: (selectedUsersIds: string[]) => void
   setModalType: (modalType: MODAL_TYPES | null) => void
+  setSearch: (search: string) => void
 }
 
 export type DashboardStore = DashboardState & DashboardActions
