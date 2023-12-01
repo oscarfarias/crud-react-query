@@ -1,7 +1,7 @@
 import { create } from 'zustand'
-import { UserStore } from './types'
+import { DashboardStore } from './types'
 
-export const useUserStore = create<UserStore>((set) => ({
+export const useDashboardStore = create<DashboardStore>((set) => ({
   showPassword: false,
   selectedUsersIds: [],
   user: {},

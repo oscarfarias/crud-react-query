@@ -5,18 +5,18 @@ export enum MODAL_TYPES {
   DELETE = `delete`,
 }
 
-export type UserState = {
+export type DashboardState = {
   modalType: MODAL_TYPES | null
   user: Partial<AugmentedUser>
   showPassword: boolean
   selectedUsersIds: string[]
 }
 
-export type UserActions = {
+export type DashboardActions = {
   setUser: (user: Partial<AugmentedUser>) => void
   setShowPassword: (showPassword: boolean) => void
   setSelectedUsersIds: (selectedUsersIds: string[]) => void
   setModalType: (modalType: MODAL_TYPES | null) => void
 }
 
-export type UserStore = UserState & UserActions
+export type DashboardStore = DashboardState & DashboardActions

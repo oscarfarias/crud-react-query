@@ -1,7 +1,7 @@
 import axios, { AxiosResponse, AxiosRequestConfig } from 'axios'
 import https from 'https'
 import { TOKEN_KEY } from 'common/config/constants'
-import { AugmentedUser, SerializedResponse } from 'common/types'
+import { AugmentedUser, UpsertUser, SerializedResponse } from 'common/types'
 import { Role } from 'entities'
 
 const requestHandler = (config: AxiosRequestConfig): unknown => {
@@ -56,7 +56,7 @@ const API = {
       },
     })
   },
-  upsertUser: async (user: Partial<AugmentedUser>): Promise<AugmentedUser> => {
+  upsertUser: async (user: Partial<UpsertUser>): Promise<AugmentedUser> => {
     return axiosInstance.post(`/users`, user)
   },
 }
