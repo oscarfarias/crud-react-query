@@ -108,6 +108,9 @@ export const useUpsertUserMutation = (
       })
       enqueueSnackbar(`Saved!`, { variant: `success` })
     },
+    onError: (error) => {
+      enqueueSnackbar(`Error saving user: ${error}`, { variant: `error` })
+    },
     ...options,
   })
   return mutation
