@@ -2,12 +2,15 @@ import { AppBar, Grid, TextField, Toolbar, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import { Icon } from 'common/components'
 import { drawerWidth } from 'common/config/constants'
+import { useDashboardStore } from './Dashboard/store'
 const Header = (): JSX.Element => {
   const {
     palette: {
       custom: { lightDark, lightWhite, primaryDark },
     },
   } = useTheme()
+
+  const { search, setSearch } = useDashboardStore((state) => state)
 
   return (
     <AppBar
@@ -66,6 +69,8 @@ const Header = (): JSX.Element => {
                 },
               }}
               placeholder="Search here"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
             />
             <Grid
               item

@@ -6,6 +6,7 @@ import {
   MutationOptions,
   MutationResult,
   SerializedResponse,
+  UpsertUser,
 } from 'common/types'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { enqueueSnackbar } from 'notistack'
@@ -65,11 +66,11 @@ export const useDeleteUserMutation = (
 }
 
 export const useUpsertUserMutation = (
-  options?: MutationOptions<AugmentedUser, Partial<AugmentedUser>>,
-): MutationResult<AugmentedUser, Partial<AugmentedUser>> => {
+  options?: MutationOptions<AugmentedUser, Partial<UpsertUser>>,
+): MutationResult<AugmentedUser, Partial<UpsertUser>> => {
   const queryClient = useQueryClient()
   const mutation = useMutation({
-    mutationFn: (user: Partial<AugmentedUser>) => API.upsertUser(user),
+    mutationFn: (user: Partial<UpsertUser>) => API.upsertUser(user),
     onSuccess: (upsertedUser) => {
       queryClient.setQueryData<
         SerializedResponse<AugmentedUser, { users: string }>
@@ -107,6 +108,9 @@ export const useUpsertUserMutation = (
         }
       })
       enqueueSnackbar(`Saved!`, { variant: `success` })
+    },
+    onError: (error) => {
+      enqueueSnackbar(`Error saving user: ${error}`, { variant: `error` })
     },
     ...options,
   })

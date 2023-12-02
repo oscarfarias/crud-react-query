@@ -1,14 +1,15 @@
 import { useMemo } from 'react'
-import { AugmentedUser } from 'common/types/user'
+import { AugmentedUser, UpsertUser } from 'common/types/user'
 import {
   useDeleteUserMutation,
   useUpsertUserMutation,
   useUserQuery,
 } from 'common/queries/useUserQuery'
-import { useUserStore } from '../store'
+import { useDashboardStore } from '../store'
 import { MODAL_TYPES } from '../types'
 import { useRoleQuery } from 'common/queries/useRoleQuery'
-import { Role } from 'entities'
+import schema from '../schema'
+import useValidator from 'common/hooks/useValidator'
 
 const useDashboard = () => {
   const {
@@ -20,15 +21,35 @@ const useDashboard = () => {
     setUser,
     selectedUsersIds,
     setSelectedUsersIds,
-  } = useUserStore((state) => state)
+    search,
+  } = useDashboardStore((state) => state)
+
+  const {
+    handleSubmit,
+    setValue,
+    formState: { errors },
+    reset,
+    control,
+  } = useValidator(schema)
   const userQuery = useUserQuery()
   const roleQuery = useRoleQuery()
   const deleteUsers = useDeleteUserMutation()
   const upsertUser = useUpsertUserMutation()
-  const users = useMemo(
-    () => (userQuery.data != null ? userQuery.data : []),
-    [userQuery.data],
-  )
+  const users = useMemo(() => {
+    if (userQuery.data == null) {
+      return []
+    }
+    if (search.length > 0) {
+      return userQuery.data?.filter((user) => {
+        return (
+          user.firstName.toLowerCase().includes(search.toLowerCase()) ||
+          user?.lastName?.toLowerCase()?.includes(search.toLowerCase()) ||
+          user.email.toLowerCase().includes(search.toLowerCase())
+        )
+      })
+    }
+    return userQuery.data
+  }, [userQuery.data, search])
   const roles = useMemo(
     () => (roleQuery.data != null ? roleQuery.data : []),
     [roleQuery.data],
@@ -36,6 +57,13 @@ const useDashboard = () => {
 
   const onRowClick = (user: AugmentedUser): void => {
     setUser(user)
+    setValue(`id`, user.id)
+    setValue(`firstName`, user.firstName)
+    setValue(`lastName`, user.lastName)
+    setValue(`email`, user.email)
+    if (user.role?.id) {
+      setValue(`role`, user.role.id)
+    }
     setModalType(MODAL_TYPES.UPSERT)
   }
   const closeModal = (): void => {
@@ -43,6 +71,7 @@ const useDashboard = () => {
   }
   const onCloseModal = (): void => {
     setUser({})
+    reset()
     closeModal()
   }
 
@@ -61,40 +90,11 @@ const useDashboard = () => {
     setSelectedUsersIds([])
     closeModal()
   }
-  const onUpsertUser = async (): Promise<void> => {
+  const onUpsertUser = async (user: UpsertUser): Promise<void> => {
     await upsertUser.mutateAsync(user)
     setUser({})
+    reset()
     closeModal()
-  }
-  const onChangeFirstName = (firstName: string): void => {
-    setUser({
-      ...user,
-      firstName,
-    })
-  }
-  const onChangeLastName = (lastName: string): void => {
-    setUser({
-      ...user,
-      lastName,
-    })
-  }
-  const onChangeEmail = (email: string): void => {
-    setUser({
-      ...user,
-      email,
-    })
-  }
-  const onChangeRole = (role: number): void => {
-    setUser({
-      ...user,
-      role: role as unknown as Role,
-    })
-  }
-  const onChangePassword = (password: string): void => {
-    setUser({
-      ...user,
-      password,
-    })
   }
 
   return {
@@ -113,11 +113,9 @@ const useDashboard = () => {
     openDeleteModal,
     onDeleteUsers,
     onUpsertUser,
-    onChangeEmail,
-    onChangeFirstName,
-    onChangeLastName,
-    onChangeRole,
-    onChangePassword,
+    handleSubmit,
+    errors,
+    control,
   }
 }
 

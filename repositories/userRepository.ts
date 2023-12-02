@@ -1,6 +1,7 @@
 import { FilterQuery, FindOptions, RequiredEntityData } from '@mikro-orm/core'
 import { getEntityManager } from '../common/utils/orm'
 import { User } from '../entities'
+import bcrypt from 'bcrypt'
 
 import Boom from '@hapi/boom'
 const userRepository = {
@@ -66,7 +67,10 @@ const userRepository = {
         return upsertedUser
       }
     }
-    const upsertedUser = await em.create(User, user)
+    const upsertedUser = await em.create(User, {
+      ...user,
+      password: bcrypt.hashSync(user.password, 10),
+    })
     await em.persistAndFlush(upsertedUser)
     await em.populate(upsertedUser, [`role`])
     return upsertedUser

@@ -1,13 +1,15 @@
 import { create } from 'zustand'
-import { UserStore } from './types'
+import { DashboardStore } from './types'
 
-export const useUserStore = create<UserStore>((set) => ({
+export const useDashboardStore = create<DashboardStore>((set) => ({
   showPassword: false,
   selectedUsersIds: [],
   user: {},
   modalType: null,
+  search: ``,
   setUser: (user) => set({ user }),
   setShowPassword: (showPassword) => set({ showPassword }),
   setSelectedUsersIds: (selectedUsersIds) => set({ selectedUsersIds }),
   setModalType: (modalType) => set({ modalType }),
+  setSearch: (search) => set({ search }),
 }))

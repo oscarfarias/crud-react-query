@@ -6,7 +6,7 @@ import { AugmentedUser } from 'common/types/user'
 import { Icon, Modal, SelectInput } from 'common/components'
 import { useDashboard } from './hooks/useDashboard'
 import { MODAL_TYPES } from './types'
-
+import { Controller } from 'react-hook-form'
 const getColumns = (): HeadCell<AugmentedUser>[] => {
   return [
     {
@@ -48,11 +48,9 @@ const Dashboard = (): JSX.Element => {
     closeModal,
     onDeleteUsers,
     onUpsertUser,
-    onChangeEmail,
-    onChangeFirstName,
-    onChangeLastName,
-    onChangeRole,
-    onChangePassword,
+    handleSubmit,
+    errors,
+    control,
   } = useDashboard()
 
   return (
@@ -74,47 +72,89 @@ const Dashboard = (): JSX.Element => {
         title={user.id ? `Update user` : `Create New user`}
         isOpen={modalType === MODAL_TYPES.UPSERT}
         onCancel={onCloseModal}
-        onConfirm={onUpsertUser}
+        onConfirm={handleSubmit(onUpsertUser)}
         confirmText={user.id ? `UPDATE` : `CREATE`}
       >
         <Grid container p={3} gap={1} flexDirection="column">
-          <TextField
-            placeholder="First Name"
-            defaultValue={user.firstName}
-            onChange={(event) => onChangeFirstName(event.target.value)}
+          <Controller
+            name="firstName"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <TextField
+                placeholder="First Name"
+                value={value}
+                onChange={(event) => onChange(event.target.value)}
+                error={!!errors?.firstName?.message}
+                helperText={errors?.firstName?.message}
+              />
+            )}
           />
-          <TextField
-            placeholder="Last Name"
-            defaultValue={user.lastName}
-            onChange={(event) => onChangeLastName(event.target.value)}
+          <Controller
+            name="lastName"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <TextField
+                placeholder="Last Name"
+                value={value}
+                onChange={(event) => onChange(event.target.value)}
+                error={!!errors?.lastName?.message}
+                helperText={errors?.lastName?.message}
+              />
+            )}
           />
-          <TextField
-            type="email"
-            placeholder="Email"
-            defaultValue={user.email}
-            onChange={(event) => onChangeEmail(event.target.value)}
+          <Controller
+            name="email"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <TextField
+                placeholder="Email"
+                value={value}
+                onChange={(event) => onChange(event.target.value)}
+                error={!!errors?.email?.message}
+                helperText={errors?.email?.message}
+              />
+            )}
           />
-          <SelectInput
-            options={roles}
-            placeholder="Role"
-            defaultValue={user?.role?.id}
-            onChange={(event) => onChangeRole(Number(event.target.value))}
+
+          <Controller
+            name="role"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <SelectInput
+                options={roles}
+                placeholder="Role"
+                value={value}
+                onChange={(event) => onChange(Number(event.target.value))}
+                helperText={errors?.role?.message}
+                error={!!errors?.role?.message}
+              />
+            )}
           />
+
           {user.id == null ? (
-            <TextField
-              type={showPassword ? `text` : `password`}
-              placeholder="Password"
-              onChange={(event) => onChangePassword(event.target.value)}
-              InputProps={{
-                endAdornment: (
-                  <IconButton onClick={toggleShowPassword}>
-                    <Icon
-                      icon={showPassword ? `visibilityOff` : `visibility`}
-                      sx={{ color: `black` }}
-                    />
-                  </IconButton>
-                ),
-              }}
+            <Controller
+              name="password"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <TextField
+                  type={showPassword ? `text` : `password`}
+                  placeholder="Password"
+                  onChange={(event) => onChange(event.target.value)}
+                  value={value}
+                  error={!!errors?.password?.message}
+                  helperText={errors?.password?.message}
+                  InputProps={{
+                    endAdornment: (
+                      <IconButton onClick={toggleShowPassword}>
+                        <Icon
+                          icon={showPassword ? `visibilityOff` : `visibility`}
+                          sx={{ color: `black` }}
+                        />
+                      </IconButton>
+                    ),
+                  }}
+                />
+              )}
             />
           ) : null}
         </Grid>

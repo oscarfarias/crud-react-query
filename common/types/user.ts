@@ -9,3 +9,7 @@ export interface RequiredAugmentedUser
   extends Omit<RequiredEntityData<User>, `id`> {
   id: string
 }
+
+export interface UpsertUser extends Omit<AugmentedUser, `role`> {
+  role: number
+}
